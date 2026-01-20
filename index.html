@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বাতিসা ইউনিয়ন ভূমি অফিস | স্মার্ট ড্যাশবোর্ড</title>
+    <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-dark: #064e3b;
+            --accent: #10b981;
+            --bg-soft: #f8fafc;
+        }
+
+        body {
+            background-color: var(--bg-soft);
+            font-family: 'Hind Siliguri', sans-serif;
+            scroll-behavior: smooth;
+            color: #1e293b;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* মাউস কার্সর ইফেক্ট */
+        #cursor-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(600px circle at var(--x, 0px) var(--y, 0px), rgba(16, 185, 129, 0.08), transparent 40%);
+            z-index: -1;
+        }
+
+        /* ব্যাকগ্রাউন্ড ল্যান্ড ভেক্টর */
+        .bg-vector-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            opacity: 0.03;
+            pointer-events: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-content: space-around;
+            font-size: 8rem;
+            color: var(--primary);
+        }
+
+        .main-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 20px 12px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center;
+            text-decoration: none; position: relative; overflow: hidden;
+        }
+        .main-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            border-color: var(--accent);
+        }
+        .main-card::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px;
+            background: var(--accent); transform: scaleX(0); transition: transform 0.4s ease;
+        }
+        .main-card:hover::after { transform: scaleX(1); }
+
+        .icon-wrapper {
+            width: 64px; height: 64px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 14px; margin-bottom: 1rem; font-size: 1.8rem;
+            transition: 0.3s;
+        }
+
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 1000;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-box {
+            background: white; margin: 5vh auto; padding: 2.5rem;
+            border-radius: 28px; width: 92%; max-width: 550px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            position: relative; animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .todo-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1.2rem; border-radius: 16px; margin-bottom: 12px;
+            background: #fdfdfd; border: 1px solid #f1f5f9;
+            transition: 0.3s;
+        }
+        .todo-item:hover { border-color: var(--accent); background: #f0fdf4; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .quote-box {
+            border-left: 3px solid var(--accent);
+            padding-left: 1.5rem;
+            margin-left: 1.5rem;
+            min-height: 50px;
+            display: flex; align-items: center;
+        }
+        #quote-text { transition: opacity 0.5s ease; font-style: italic; color: #475569; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="bg-vector-layer">
+        <i class="fas fa-map"></i>
+        <i class="fas fa-seedling"></i>
+        <i class="fas fa-landmark"></i>
+        <i class="fas fa-file-contract"></i>
+        <i class="fas fa-mountain-sun"></i>
+        <i class="fas fa-location-dot"></i>
+    </div>
+    <div id="cursor-glow"></div>
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 py-4">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" class="w-10 h-10" alt="Logo">
+                <div class="hidden sm:block">
+                    <h2 class="text-sm font-bold text-slate-500 leading-tight">স্মার্ট ড্যাশবোর্ড</h2>
+                    <h1 class="text-lg font-black text-emerald-800 tracking-tight">বাতিসা ইউনিয়ন ভূমি অফিস</h1>
+                </div>
+            </div>
+            <div class="flex gap-8 text-sm font-bold text-slate-600">
+                <a href="#land" class="hover:text-emerald-600 transition">ভূমি সেবা</a>
+                <a href="#google" class="hover:text-emerald-600 transition">গুগল</a>
+                <a href="#utility" class="hover:text-emerald-600 transition">টুলস</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="max-w-7xl mx-auto px-6 pt-12 pb-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+                <h2 class="text-emerald-600 font-bold tracking-widest uppercase text-sm mb-3">Government Of Bangladesh</h2>
+                <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-4">ডিজিটাল ভূমি সেবা কেন্দ্র</h1>
+                
+                <div class="flex flex-wrap items-center gap-3">
+                    <p class="bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm text-slate-600 font-bold flex items-center gap-2">
+                        <i class="fas fa-calendar-day text-emerald-500"></i> <span id="eng-date">লোড হচ্ছে...</span>
+                    </p>
+                    <p class="bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100 shadow-sm text-emerald-700 font-bold flex items-center gap-2">
+                        <i class="fas fa-calendar-alt"></i> <span id="bn-date">লোড হচ্ছে...</span>
+                    </p>
+                    <p class="bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm text-slate-600 font-bold flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-rose-500"></i> চৌদ্দগ্রাম, কুমিল্লা
+                    </p>
+                </div>
+            </div>
+            <div class="quote-box max-w-md hidden lg:flex">
+                <div class="flex gap-4 items-start">
+                    <i class="fas fa-quote-left text-emerald-500 text-xl mt-1"></i>
+                    <p id="quote-text" class="text-lg font-medium">সেবাই আমাদের মূল লক্ষ্য</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 pb-24">
+        <section id="land" class="mb-16">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white"><i class="fas fa-layer-group"></i></div>
+                <h3 class="text-2xl font-black text-slate-800">ভূমি ও নাগরিক সেবা</h3>
+                <div class="flex-1 h-[1px] bg-slate-200"></div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                <a href="https://minland.gov.bd/" target="_blank" class="main-card">
+                    <div class="icon-wrapper bg-emerald-50 text-emerald-600"><i class="fas fa-landmark-flag"></i></div>
+                    <span class="text-[15px] font-bold text-center">মন্ত্রণালয় হোম</span>
+                </a>
+                <a href="https://dashboard.land.gov.bd/dashboard" target="_blank" class="main-card">
+                    <div class="icon-wrapper bg-orange-50 text-orange-600"><i class="fas fa-chart-pie"></i></div>
+                    <span class="text-[15px] font-bold">ড্যাশবোর্ড</span>
+                </a>
+                <a href="https://lsg-land-owner.land.gov.bd/login" target="_blank" class="main-card">
+                    <div class="icon-wrapper bg-cyan-50 text-cyan-600"><i class="fas fa-user-shield"></i></div>
+                    <span class="text-[15px] font-bold">নাগরিক লগইন</span>
+                </a>
+                <a href="https://mutation.land.gov.bd/search-application" target="_blank" class="main-card">
+                    <div class="icon-wrapper bg-amber-50 text-amber-600"><i class="fas fa-magnifying-glass-location"></i></div>
+                    <span class="text-[15px] font-bold">নামজারি খুঁজুন</span>
+                </a>
+                <a href="https://mutation.land.gov.bd/" target="_blank" class="main-card">
+                    <div class="icon-wrapper bg-yellow-50 text-yellow-700"><i class="fas fa-file-pen"></i></div>
+                    <span class="text-[15px] font-bold">নামজারি আবেদন</span>
+                </a>
+                <a href="https://www.eporcha.gov.bd/" target="_blank" class="main-card">
+                    <div class="icon-wrapper bg-lime-50 text-lime-600"><i class="fas fa-map-location"></i></div>
+                    <span class="text-[15px] font-bold">খতিয়ান ও ম্যাপ</span>
+                </a>
+                <a href="https://uttoradhikar.gov.bd/" target="_blank" class="main-card">
+                    <div class="icon-wrapper bg-blue-50 text-blue-700"><i class="fas fa-users-rectangle"></i></div>
+                    <span class="text-[15px] font-bold">উত্তরাধিকার</span>
+                </a>
+                <a href="https://chauddagram.comillalg.gov.bd/" target="_blank" class="main-card">
+                    <div class="icon-wrapper bg-sky-50 text-sky-600"><i class="fas fa-building-columns"></i></div>
+                    <span class="text-[15px] font-bold">ইউনিয়ন পরিষদ</span>
+                </a>
+                <a href="https://cgpoura.gov.bd/verify" target="_blank" class="main-card">
+                    <div class="icon-wrapper bg-violet-50 text-violet-600"><i class="fas fa-city"></i></div>
+                    <span class="text-[15px] font-bold">পৌরসভা</span>
+                </a>
+                <a href="https://everify.bdris.gov.bd/" target="_blank" class="main-card">
+                    <div class="icon-wrapper bg-pink-50 text-pink-600"><i class="fas fa-id-card-clip"></i></div>
+                    <span class="text-[15px] font-bold">জন্মসনদ যাচাই</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="grid md:grid-cols-2 gap-12">
+            <section id="google">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white"><i class="fab fa-google text-sm"></i></div>
+                    <h3 class="text-xl font-bold text-slate-800">গুগল সার্ভিসেস</h3>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <a href="https://mail.google.com/" target="_blank" class="main-card"><i class="fas fa-envelope text-red-500 mb-2 text-xl"></i><span class="text-sm font-bold">জিমেইল</span></a>
+                    <a href="https://drive.google.com/" target="_blank" class="main-card"><i class="fab fa-google-drive text-green-600 mb-2 text-xl"></i><span class="text-sm font-bold">ড্রাইভ</span></a>
+                    <a href="https://gemini.google.com/" target="_blank" class="main-card"><i class="fas fa-wand-magic-sparkles text-indigo-500 mb-2 text-xl"></i><span class="text-sm font-bold">জেমিনি AI</span></a>
+                </div>
+            </section>
+            <section id="utility">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-8 h-8 bg-orange-500 rounded flex items-center justify-center text-white"><i class="fas fa-toolbox text-sm"></i></div>
+                    <h3 class="text-xl font-bold text-slate-800">প্রয়োজনীয় টুলস</h3>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <a href="https://e-amarseba.com/" target="_blank" class="main-card"><i class="fas fa-briefcase text-orange-600 mb-2 text-xl"></i><span class="text-sm font-bold">আমার সেবা</span></a>
+                    <a href="https://dolilsheba.com/" target="_blank" class="main-card"><i class="fas fa-book-open text-red-700 mb-2 text-xl"></i><span class="text-sm font-bold">দলিল সেবা</span></a>
+                    <a href="https://support.brother.com/g/b/downloadtop.aspx?c=us_ot&lang=en&prod=hll6210dw_us_eu_as" target="_blank" class="main-card"><i class="fas fa-print text-slate-700 mb-2 text-xl"></i><span class="text-sm font-bold">প্রিন্টার ড্রাইভার</span></a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <button onclick="toggleModal()" class="fixed bottom-8 right-8 bg-emerald-600 hover:bg-emerald-700 text-white w-16 h-16 rounded-2xl shadow-2xl flex items-center justify-center transition-all hover:scale-110 z-40">
+        <i class="fas fa-list-check text-2xl"></i>
+    </button>
+
+    <div id="todo-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button onclick="toggleModal()" class="absolute top-6 right-6 text-slate-400 hover:text-rose-500 transition text-2xl"><i class="fas fa-circle-xmark"></i></button>
+            <header class="mb-8">
+                <h3 class="text-2xl font-black text-slate-800">অফিস কার্যতালিকা</h3>
+                <p class="text-slate-500 font-medium">আপনার আজকের কাজগুলো ম্যানেজ করুন</p>
+                <div class="flex gap-3 mt-4">
+                    <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold border border-emerald-100">সম্পন্ন: <span id="total-tasks">০</span></span>
+                    <span class="bg-amber-50 text-amber-700 px-3 py-1 rounded-lg text-xs font-bold border border-amber-100">বাকি: <span id="rem-tasks">০</span></span>
+                </div>
+            </header>
+            <div class="flex gap-3 mb-8">
+                <input type="text" id="todo-input" placeholder="নতুন কাজ যোগ করুন..." class="flex-1 bg-slate-50 border rounded-xl px-5 py-4 outline-none transition font-medium">
+                <button onclick="addTodo()" class="bg-emerald-600 text-white px-6 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-100"><i class="fas fa-plus"></i></button>
+            </div>
+            <div id="todo-list" class="max-h-[350px] overflow-y-auto pr-2 custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-900 text-slate-300 pt-16 pb-8 mt-12">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 mb-12 border-b border-slate-800 pb-12">
+            <div>
+                <h4 class="text-white text-xl font-bold mb-4 flex items-center gap-2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" class="w-8 h-8"> 
+                    বাতিসা ভূমি অফিস
+                </h4>
+                <p class="text-slate-400 leading-relaxed mb-4">ডিজিটাল প্রযুক্তির মাধ্যমে স্মার্ট ভূমি সেবা সরাসরি আপনার হাতের মুঠোয় পৌঁছে দিতে আমরা অঙ্গীকারবদ্ধ।</p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-emerald-600 transition text-white"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-emerald-600 transition text-white"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="text-white text-lg font-bold mb-6">যোগাযোগের তথ্য</h4>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <i class="fas fa-user-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <p class="text-white font-bold leading-none">রবিউল হাসান</p>
+                            <span class="text-xs text-emerald-500 font-bold uppercase">ডাটা এন্ট্রি অপারেটর</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <i class="fas fa-envelope text-emerald-500"></i>
+                        <span>rabiuldeo@gmail.com</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <i class="fas fa-phone-alt text-emerald-500"></i>
+                        <span>+৮৮০ ১৮৮৬৮২৮০৪২</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-white text-lg font-bold mb-6">অফিসের অবস্থান</h4>
+                <div class="bg-slate-800/50 p-5 rounded-2xl border border-slate-700">
+                    <p class="text-white font-bold mb-1">ইউনিয়ন ভূমি অফিস, বাতিসা</p>
+                    <p class="text-slate-400 text-sm mb-4">চৌদ্দগ্রাম উপজেলা, কুমিল্লা জেলা, চট্টগ্রাম বিভাগ।</p>
+                    <a href="#" class="text-emerald-400 text-sm font-bold hover:underline flex items-center gap-2">
+                        <i class="fas fa-location-arrow"></i> গুগল ম্যাপে দেখুন
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm font-medium">
+            <p>© ২০২৬ সর্বস্বত্ব সংরক্ষিত - বাতিসা ইউনিয়ন ভূমি অফিস</p>
+            <p class="mt-2 md:mt-0">পরিকল্পনা ও বাস্তবায়নে: <span class="text-emerald-500">রবিউল হাসান</span></p>
+        </div>
+    </footer>
+
+    <script>
+        // মাউস গ্লো পজিশনিং
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.getElementById('cursor-glow');
+            glow.style.setProperty('--x', e.clientX + 'px');
+            glow.style.setProperty('--y', e.clientY + 'px');
+        });
+
+        // তারিখ আপডেট
+        function updateDates() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            const engDate = now.toLocaleDateString('bn-BD', options);
+            document.getElementById('eng-date').innerText = engDate;
+
+            let day = now.getDate();
+            let month = now.getMonth();
+            let year = now.getFullYear();
+            let bnYear = year - 593;
+            if (month < 3 || (month === 3 && day < 14)) bnYear--;
+            document.getElementById('bn-date').innerText = `${toBn(bnYear)} বঙ্গাব্দ`;
+        }
+
+        window.onload = function() {
+            render(); 
+            updateDates();
+        };
+
+        const quotes = ["সেবাই আমাদের মূল লক্ষ্য।", "ভূমি সেবা এখন আপনার হাতের মুঠোয়।", "সততাই সর্বোৎকৃষ্ট পন্থা।", "স্মার্ট ভূমি সেবায় গড়বো স্মার্ট বাংলাদেশ।", "দুর্নীতিমুক্ত ভূমি সেবা, আমাদের অঙ্গীকার।"];
+        let qIndex = 0;
+        setInterval(() => {
+            const qText = document.getElementById('quote-text');
+            if(qText) {
+                qText.style.opacity = 0;
+                setTimeout(() => {
+                    qIndex = (qIndex + 1) % quotes.length;
+                    qText.innerText = quotes[qIndex];
+                    qText.style.opacity = 1;
+                }, 500);
+            }
+        }, 5000);
+
+        // টুডু লজিক
+        const modal = document.getElementById('todo-modal');
+        const tInput = document.getElementById('todo-input');
+        const tList = document.getElementById('todo-list');
+        let tasks = JSON.parse(localStorage.getItem('off_tasks_v3')) || [];
+
+        function toggleModal() {
+            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+            if (modal.style.display === 'block') { setTimeout(() => tInput.focus(), 100); render(); }
+        }
+
+        function toBn(n) { return n.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]); }
+
+        function render() {
+            tList.innerHTML = '';
+            tasks.forEach((t, i) => {
+                const item = document.createElement('div');
+                item.className = `todo-item ${t.done ? 'opacity-60 bg-slate-50' : ''}`;
+                item.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <span class="text-[10px] font-black text-emerald-600 bg-emerald-50 w-6 h-6 flex items-center justify-center rounded-full border border-emerald-100 shadow-sm">${toBn(i + 1)}</span>
+                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="check(${i})" class="w-5 h-5 accent-emerald-600 cursor-pointer">
+                        <span class="${t.done ? 'line-through text-slate-400' : ''} font-medium">${t.text}</span>
+                    </div>
+                    <button onclick="del(${i})" class="text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-can"></i></button>
+                `;
+                tList.appendChild(item);
+            });
+            document.getElementById('total-tasks').innerText = toBn(tasks.filter(x => x.done).length);
+            document.getElementById('rem-tasks').innerText = toBn(tasks.filter(x => !x.done).length);
+        }
+
+        function addTodo() {
+            const val = tInput.value.trim();
+            if(!val) return;
+            tasks.push({text: val, done: false});
+            localStorage.setItem('off_tasks_v3', JSON.stringify(tasks));
+            tInput.value = '';
+            render();
+        }
+
+        function check(i) { tasks[i].done = !tasks[i].done; localStorage.setItem('off_tasks_v3', JSON.stringify(tasks)); render(); }
+        function del(i) { tasks.splice(i, 1); localStorage.setItem('off_tasks_v3', JSON.stringify(tasks)); render(); }
+        tInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTodo(); } });
+        window.onclick = (e) => { if(e.target == modal) toggleModal(); };
+    </script>
+</body>
+</html>
