@@ -1,0 +1,46 @@
+{
+  "name": "Rabiuls Office - ভূমি সেবা কেন্দ্র",
+  "short_name": "Rabiuls Office",
+  "description": "বাতিসা ইউনিয়ন ভূমি অফিসের ডিজিটাল সার্ভিস পোর্টাল",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f4c35",
+  "theme_color": "#0f4c35",
+  "orientation": "portrait-primary",
+  "lang": "bn",
+  "dir": "ltr",
+  "categories": ["government", "productivity", "utilities"],
+  "icons": [
+    { "src": "assets/icons/icon-72.png",  "sizes": "72x72",   "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-96.png",  "sizes": "96x96",   "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-152.png", "sizes": "152x152", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icons/icon-384.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "নামজারি আবেদন",
+      "short_name": "নামজারি",
+      "url": "https://mutation.land.gov.bd/",
+      "icons": [{ "src": "assets/icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "খতিয়ান ও ম্যাপ",
+      "short_name": "খতিয়ান",
+      "url": "https://dlrms.land.gov.bd/",
+      "icons": [{ "src": "assets/icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "নোটপ্যাড",
+      "short_name": "নোটপ্যাড",
+      "url": "./pages/notepad.html",
+      "icons": [{ "src": "assets/icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ]
+}

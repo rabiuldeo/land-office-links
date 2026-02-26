@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>অফলাইন - Rabiuls Office</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans Bengali', sans-serif;
+      background: #0f4c35;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 2rem;
+    }
+    .container { max-width: 400px; }
+    .icon { font-size: 5rem; margin-bottom: 1.5rem; }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
+    p { color: rgba(255,255,255,0.7); margin-bottom: 2rem; line-height: 1.7; }
+    button {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 0.875rem 2rem;
+      border-radius: 12px;
+      font-family: 'Noto Sans Bengali', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #059669; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">📡</div>
+    <h1>আপনি অফলাইনে আছেন</h1>
+    <p>ইন্টারনেট সংযোগ নেই। সংযোগ ফিরে আসলে পুনরায় চেষ্টা করুন।</p>
+    <button onclick="window.location.reload()">🔄 পুনরায় চেষ্টা করুন</button>
+  </div>
+</body>
+</html>
